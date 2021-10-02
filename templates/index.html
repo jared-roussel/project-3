@@ -1,0 +1,48 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Cost Of Living</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap5.css">
+  </head>
+  <body>
+    <div class="container">
+      <h1>{{ title }}</h1>
+      <hr>
+      {% extends "base.html" %}
+
+{% block content %}
+  <table id="data" class="table table-striped">
+    <thead>
+      <tr>
+        <th>City</th>
+        <th>State</th>
+        <th>Cost_of_Living_Index</th>
+        <th>Local_Purchasing_Power</th>
+        <th>Groceries_Index</th>
+        <th>Rent_Index</th>
+        <th>Restaurant_Price_Index</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for city in cities %}
+        <tr>
+          <td>{{ city.City}}</td>
+          <td>{{ city.State }}</td>
+          <td>{{ city.Cost_of_Living_Index }}</td>
+          <td>{{ city.Local_Purchasing_Power }}</td>
+          <td>{{ city.Groceries_Index }}</td>
+          <td>{{ city.Rent_Index }}</td>
+          <td>{{ city.Restaurant_Price_Index}}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% endblock %}
+    </div>
+    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap5.js"></script>
+    {% block scripts %}{% endblock %}
+  </body>
+</html>
