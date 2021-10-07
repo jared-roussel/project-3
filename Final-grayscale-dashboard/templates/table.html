@@ -1,0 +1,72 @@
+<!doctype html>
+<html>
+  <head>
+    <title>{{ title }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.25/css/dataTables.bootstrap5.css">
+  </head>
+  <body>
+    <div class="container">
+      {% block content %}
+        <table id="data" class="table table-striped">
+          <thead>
+            <tr>
+              <th>rank</th>  
+              <th>city</th>
+              <th>state_id</th>
+              <th>census_2020</th>
+              <th>census_2010</th>
+              <th>census_change</th>
+              <th>state_name</th>
+              <th>latitude</th>
+              <th>longitude</th>                          
+              <th>cost_of_living_index</th>
+              <th>local_purchasing_power</th>
+              <th>groceries_index</th>
+              <th>rent_index</th>
+              <th>restaurant_price_index</th>
+              <th>f500_average_rank</th>
+              <th>f500_total_companies</th>
+              <th>f500_total_employees</th>
+              <th>f500_total_revenue</th>
+              <th>f500_total_profit</th>
+              <th>total_venues</th>
+              <th>total_superbowls</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for db in cities %}
+              <tr>
+                <td>{{ db.rank}}</td>  
+                <td>{{ db.city}}</td>
+                <td>{{ db.state_id }}</td>
+                <td>{{ db.census_2020}}</td>
+                <td>{{ db.census_2010}}</td>
+                <td>{{ db.change}}</td>
+                <td>{{ db.state_name}}</td>
+                <td>{{ db.latitude}}</td>
+                <td>{{ db.longitude}}</td>
+                <td>{{ db.costofliving }}</td>
+                <td>{{ db.localpurchasingpower }}</td>
+                <td>{{ db.groceries }}</td>
+                <td>{{ db.rent }}</td>
+                <td>{{ db.restaurant}}</td>
+                <td>{{ db.f500_average_rank}}</td>
+                <td>{{ db.f500_total_companies}}</td>
+                <td>{{ db.f500_total_employees}}</td>
+                <td>{{ db.f500_total_revenue}}</td>
+                <td>{{ db.f500_total_profit}}</td>
+                <td>{{ db.total_venues}}</td>
+                <td>{{ db.total_superbowls}}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% endblock %}
+          </div>   
+    <script type="text/javascript" charset="utf8" src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.js"></script>
+    <script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.10.25/js/dataTables.bootstrap5.js"></script>
+    {% block scripts %}{% endblock %}
+  </body>
+</html>
