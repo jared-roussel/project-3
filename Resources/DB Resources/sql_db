@@ -1,0 +1,366 @@
+-- Drop table if exists
+DROP TABLE census;
+
+-- Create new table for census and import CSV
+CREATE TABLE census (
+	Rank INT,
+	City VARCHAR,
+	State_id VARCHAR,
+	Census_2020 INT,
+	Census_2010 INT,
+	Change DEC
+);
+
+-- Drop table if exists
+DROP TABLE costofliving;
+
+-- Create new table for costofliving and import CSV
+CREATE TABLE costofliving (
+	City VARCHAR,
+	State VARCHAR,
+	costofliving DEC,
+	localpurchasingpower DEC,
+	Groceries DEC,
+	Rent DEC,
+	Restaurant DEC
+);
+
+-- Drop table if exists
+DROP TABLE superbowl;
+
+-- Create new table for superbowl and import CSV
+CREATE TABLE superbowl (
+	Date VARCHAR,
+	superbowl VARCHAR,
+	winner VARCHAR,
+	winner_points INT,
+	loser VARCHAR,
+	loser_points INT,
+	mvp VARCHAR,
+	stadium VARCHAR,
+	city VARCHAR,
+	state VARCHAR,
+	year INT
+);
+
+-- Drop table if exists
+DROP TABLE groupby_superbowl;
+
+-- Create new table for groupby_superbowl
+CREATE TABLE groupby_superbowl (
+	city VARCHAR,
+	state VARCHAR,
+	total_superbowls DEC
+);
+
+-- superbowl groupby city
+Insert into groupby_superbowl
+Select city,state,count(year)
+From superbowl
+group by city,state
+order by count DESC;
+
+-- Drop table if exists
+DROP TABLE fortune500;
+
+-- Create new table for fortune500 and import CSV
+CREATE TABLE fortune500 (
+	latitude DEC,
+	longitude DEC,
+	rank INT,
+	company VARCHAR,
+	address VARCHAR,
+	city VARCHAR,
+	state VARCHAR,
+	employees DEC,
+	revenue DEC,
+	profit DEC
+);
+
+
+-- Drop table if exists
+DROP TABLE groupby_fortune500;
+
+-- Create new table for fortune500 and import CSV
+CREATE TABLE groupby_fortune500 (
+	city VARCHAR,
+	state VARCHAR,
+	average_rank DEC,
+	total_companies INT,
+	total_employees INT,
+	total_revenue INT,
+	total_profit DEC
+);
+
+-- fortune500 groupby city
+Insert into groupby_fortune500
+Select city,state,count(company),avg(rank)::numeric(10,2),sum(employees),sum(revenue),sum(profit)
+From fortune500
+group by city,state
+order by count DESC;
+
+
+-- Drop table if exists
+DROP TABLE venues;
+
+-- Create new table for fortune500 and import CSV
+CREATE TABLE venues (
+	x DEC,
+	y DEC,
+	objectid INT,
+	venueid INT,
+	name VARCHAR,
+	address VARCHAR,
+	city VARCHAR,
+	state VARCHAR,
+	zip VARCHAR,
+	zip4 VARCHAR,
+	telephone VARCHAR,
+	use VARCHAR,
+	status VARCHAR,
+	size INT,
+	county VARCHAR,
+	countyfips VARCHAR,
+	country VARCHAR,
+	latitude DEC,
+	longitude DEC,
+	type_code INT,
+	type_description VARCHAR,
+	source VARCHAR
+);
+
+-- Create new table for fortune500 and import CSV
+CREATE TABLE groupby_venues (
+	city VARCHAR,
+	state VARCHAR,
+	total_venues DEC
+);
+
+-- fortune500 groupby city
+Insert into groupby_venues
+Select city,state,count(venueid)
+From venues
+group by city,state
+order by count DESC;
+
+-- Drop table if exists
+DROP TABLE citycoor;
+
+-- Create new table for fortune500 and import CSV
+CREATE TABLE citycoor (
+	city VARCHAR,
+	city_ascii VARCHAR,
+	state_id VARCHAR,
+	state_name VARCHAR,
+	county_fips INT,
+	county_name VARCHAR,
+	latitude DEC,
+	longitude DEC
+);
+
+-- Drop table if exists
+DROP TABLE complete_db1;
+
+-- Create new table for complete_db and merge data
+CREATE TABLE complete_db1 (
+	Rank INT,
+	City VARCHAR,
+	State_id VARCHAR,
+	Census_2020 INT,
+	Census_2010 INT,
+	Change DEC,
+	city1 VARCHAR,
+	city_ascii VARCHAR,
+	state_id2 VARCHAR,
+	state_name VARCHAR,
+	county_fips INT,
+	county_name VARCHAR,
+	latitude DEC,
+	longitude DEC
+);
+
+Insert into complete_db1
+Select *
+from  census
+Left join citycoor
+	on census.City = citycoor.city
+	and census.state_id = citycoor.state_id;
+
+Alter Table complete_db1
+DROP COLUMN	city1,
+DROP COLUMN city_ascii,
+DROP COLUMN state_id2,
+DROP COLUMN county_fips,
+DROP COLUMN county_name;
+
+-- Drop table if exists
+DROP TABLE complete_db2;
+
+-- Create new table for complete_db2 and merge costofliving
+CREATE TABLE complete_db2 (
+	Rank INT,
+	City VARCHAR,
+	State_ID VARCHAR,
+	Census_2020 INT,
+	Census_2010 INT,
+	Change DEC,
+	State_name VARCHAR,
+	latitude DEC,
+	longitude DEC,
+	City2 VARCHAR,
+	State VARCHAR,
+	costofliving DEC,
+	localpurchasingpower DEC,
+	Groceries DEC,
+	Rent DEC,
+	Restaurant DEC
+);
+	
+Insert into complete_db2
+Select *
+from  complete_db1
+Left join costofliving
+	on complete_db1.City = costofliving.city
+	and complete_db1.state_id = costofliving.state;
+	
+-- Remove unused costofliving columms
+Alter Table complete_db2
+DROP COLUMN City2,
+DROP COLUMN State;
+
+-- Drop table if exists
+DROP TABLE complete_db3;
+
+-- Create new table for complete_db3 and merge groupby_fortune500
+CREATE TABLE complete_db3 (
+	Rank INT,
+	City VARCHAR,
+	State_ID VARCHAR,
+	Census_2020 INT,
+	Census_2010 INT,
+	Change DEC,
+	State_name VARCHAR,
+	latitude DEC,
+	longitude DEC,
+	costofliving DEC,
+	localpurchasingpower DEC,
+	Groceries DEC,
+	Rent DEC,
+	Restaurant DEC,
+	city3 VARCHAR,
+	state3 VARCHAR,
+	f500_average_rank DEC,
+	f500_total_companies INT,
+	f500_total_employees INT,
+	f500_total_revenue INT,
+	f500_total_profit DEC
+);
+
+	
+Insert into complete_db3
+Select *
+from  complete_db2
+Left join groupby_fortune500
+	on complete_db2.City = groupby_fortune500.city
+	and complete_db2.state_id = groupby_fortune500.state;
+	
+-- Remove unused groupby_fortune500 columms
+Alter Table complete_db3
+DROP COLUMN City3,
+DROP COLUMN State3;
+
+-- Drop table if exists
+DROP TABLE complete_db4;
+
+-- Create new table for complete_db4 and merge groupby_venues
+CREATE TABLE complete_db4 (
+	Rank INT,
+	City VARCHAR,
+	State_ID VARCHAR,
+	Census_2020 INT,
+	Census_2010 INT,
+	Change DEC,
+	State_name VARCHAR,
+	latitude DEC,
+	longitude DEC,
+	costofliving DEC,
+	localpurchasingpower DEC,
+	Groceries DEC,
+	Rent DEC,
+	Restaurant DEC,
+	f500_average_rank DEC,
+	f500_total_companies INT,
+	f500_total_employees INT,
+	f500_total_revenue INT,
+	f500_total_profit DEC,
+	city4 VARCHAR,
+	state4 VARCHAR,
+	total_venues DEC
+);
+	
+Insert into complete_db4
+Select *
+from  complete_db3
+Left join groupby_venues
+	on lower(complete_db3.City) = lower(groupby_venues.city) 
+	and complete_db3.state_id = groupby_venues.state
+order by rank ASC;
+	
+-- Remove unused groupby_venues columms
+Alter Table complete_db4
+DROP COLUMN City4,
+DROP COLUMN State4;
+
+-- Drop table if exists
+DROP TABLE complete_db;
+
+-- Create final table for complete_db with merged groupby_superbowl
+CREATE TABLE complete_db (
+	Rank INT,
+	City VARCHAR,
+	State_ID VARCHAR,
+	Census_2020 INT,
+	Census_2010 INT,
+	Change DEC,
+	State_name VARCHAR,
+	latitude DEC,
+	longitude DEC,
+	costofliving DEC,
+	localpurchasingpower DEC,
+	Groceries DEC,
+	Rent DEC,
+	Restaurant DEC,
+	f500_average_rank DEC,
+	f500_total_companies INT,
+	f500_total_employees INT,
+	f500_total_revenue INT,
+	f500_total_profit DEC,
+	total_venues INT,
+	city5 VARCHAR,
+	state5 VARCHAR,
+	total_superbowls DEC
+);
+	
+Insert into complete_db
+Select *
+from  complete_db4
+Left join groupby_superbowl
+	on lower(complete_db4.City) = lower(groupby_superbowl.city) 
+	and complete_db4.state_name = groupby_superbowl.state
+order by rank ASC;
+	
+-- Remove unused groupby_venues columms
+Alter Table complete_db
+DROP COLUMN City5,
+DROP COLUMN State5;
+
+--Remove temp tables 
+DROP TABLE complete_db1;
+DROP TABLE complete_db2;
+DROP TABLE complete_db3;
+DROP TABLE complete_db4;
+DROP TABLE groupby_fortune500;
+DROP TABLE groupby_superbowl;
+DROP TABLE groupby_venues;
+
+Select * from complete_db;
