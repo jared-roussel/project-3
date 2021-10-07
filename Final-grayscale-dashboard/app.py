@@ -109,6 +109,22 @@ def chart2():
     """
     return render_template('chart1.html', graphJSON=graphJSON, header=header,description=description)
 
+@app.route('/chart3')
+def chart3():
+    csv_path = "static/data/complete_db_drop_null.csv"
+    df = pd.read_csv(csv_path, encoding="utf-8")
+
+
+    fig = px.line(df, x="city", y=["f500_average_rank","f500_total_companies","f500_total_employees","f500_total_revenue", "f500_total_profit"])
+
+    graphJSON = json.dumps(fig, cls=plotly.utils.PlotlyJSONEncoder)
+    header="Fortune 500"
+    description = """
+    This chart illustrates the average fortune 500 company rank, total amount of employees, total revenue, total profit and the total amount of fortune 500 companies located in major cities in the United States.
+    """
+    return render_template('chart1.html', graphJSON=graphJSON, header=header,description=description)
+
+
 
 @app.route('/map',methods=['GET','POST'])
 def my_maps():
